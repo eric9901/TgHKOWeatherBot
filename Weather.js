@@ -30,19 +30,30 @@ bot.onText(/\/weather(.+)/,function(msg,match){
 
     if (weather===' a')   {
         wCode='flw';
+        request(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=${wCode}&lang=tc`,function(error,response,body){
+            if(!error && response.statusCode ==200){
+            bot.sendMessage(chatId,'_睇緊今日天氣_',{parse_mode:'Markdown'})
+            .then(function(msg){
+                var res=JSON.parse(body);
+                bot.sendMessage(chatId,'今日天氣係'+res.generalSituation);
+            })
+            }
+        });
     }
     else  if(weather===' b')     {
         wCode ='fnd';
+        request(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=${wCode}&lang=tc`,function(error,response,body){
+            if(!error && response.statusCode ==200){
+            bot.sendMessage(chatId,'_睇緊九日天氣_',{parse_mode:'Markdown'})
+            .then(function(msg){
+                var res=JSON.parse(body);
+                bot.sendMessage(chatId,'黎緊九日天氣係'+res.generalSituation);
+            })
+            }
+        });
     }
     
-    request(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=${wCode}&lang=tc`,function(error,response,body){
-    if(!error && response.statusCode ==200){
-    bot.sendMessage(chatId,'_睇緊今日天氣_',{parse_mode:'Markdown'})
-    .then(function(msg){
-        var res=JSON.parse(body);
-        bot.sendMessage(chatId,'今日天氣係'+res.generalSituation);
-    })
-    }
-});
+   
+
 
 });
