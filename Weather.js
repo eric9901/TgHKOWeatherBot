@@ -26,9 +26,9 @@ bot.on('message', (msg) => {
     bot.sendMessage(chatId, 'Received your message');
 });*/
 // now weather report
-bot.onText(/\/weare(.+)/,function(msg,match){
+bot.onText(/\/weare/,(msg)=>{
     var chatId = msg.chat.id;
-    var wCode = match[1];
+
     request(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=tc`,function(error,response,body){
             if(!error && response.statusCode ==200){
             bot.sendMessage(chatId,'_偽毒同你睇緊而家天氣_',{parse_mode:'Markdown'})
@@ -36,33 +36,53 @@ bot.onText(/\/weare(.+)/,function(msg,match){
                 var res=JSON.parse(body);
                 bot.sendMessage(chatId,'偽毒話你知而家天氣係'+res.updateTime);
             })
-            }
+           }
         });
-    bot.sendMessage(chatId,echo);
 });
 //day weather prediction 
 bot.onText(/\/weaPre(.+)/,function(msg,match){
     var chatId=msg.chat.id;
     var Command =match[1];
-     
+    if(Command ==' fd')
         request(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=flw&lang=tc`,function(error,response,body){
             if(!error && response.statusCode ==200){
             bot.sendMessage(chatId,'_偽毒同你睇緊今日天氣預報_',{parse_mode:'Markdown'})
             .then(function(msg){
                 var res=JSON.parse(body);
-                if(Command ==' gd')// weather general information
-                bot.sendMessage(chatId,'偽毒話你知今日天氣預報概況係'+res.generalSituation);
-                else if(Command ==' fd')
-                {
+               
+                
                     bot.sendMessage(chatId,'偽毒話你知今日天氣預測內容係'+res.forecastDesc
                     +'預測時段就係'+res.forecastPeriod);
-                }
+                
             })
             }
         });
 });
 
-bot.onText(/\/weaToPre(.+)/,function(msg,match){
+bot.onText(/\/weaPre/,function(msg){
+    var chatId=msg.chat.id;
+    var W="/weaPre";
+    if(msg.text.toString() === W){
+        request(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=flw&lang=tc`,function(error,response,body){
+            if(!error && response.statusCode ==200){
+            bot.sendMessage(chatId,'_偽毒同你睇緊今日天氣預報_',{parse_mode:'Markdown'})
+            .then(function(msg){
+                var res=JSON.parse(body); 
+                var WeaMess='偽毒話你知今日天氣預報概況係'+res.generalSituation+'\n展望:'+res.outlook;
+                if(res.tcInfo!='')
+                WeaMess+='\n熱烈氣旋資訊:'+res.tcInfo;
+                if(res.fireDangerWarning!='')
+                WeaMess+='\n火災危險:'+res.fireDangerWarning;
+                bot.sendMessage(chatId,WeaMess);
+
+            })
+            }
+        });
+    }
+});
+
+
+bot.onText(/\/wea9DPre(.+)/,function(msg,match){
     var chatId=msg.chat.id;
     var nextDay =match[1];
     wCode ='fnd';
