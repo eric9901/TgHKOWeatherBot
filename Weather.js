@@ -34,7 +34,7 @@ bot.onText(/\/weare/,(msg)=>{
             bot.sendMessage(chatId,'_偽毒同你睇緊而家天氣_',{parse_mode:'Markdown'})
             .then(function(msg){
                 var res=JSON.parse(body);
-                bot.sendMessage(chatId,'偽毒話你知而家天氣係'+res.updateTime);
+                bot.sendMessage(chatId,'偽毒話你知而家天氣係'+res["temperature"]["data"][2]["place"]);
             })
            }
         });
@@ -84,14 +84,15 @@ bot.onText(/\/weaPre/,function(msg){
 
 bot.onText(/\/wea9DPre(.+)/,function(msg,match){
     var chatId=msg.chat.id;
-    var nextDay =match[1];
+    var nextDay =parseInt(match[1])-1;
     wCode ='fnd';
-    request(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=flw&lang=tc`,function(error,response,body){
+    request(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=fnd&lang=tc`,function(error,response,body){
         if(!error && response.statusCode ==200){
         bot.sendMessage(chatId,'_偽毒同你睇緊九日天氣預報_',{parse_mode:'Markdown'})
         .then(function(msg){
             var res=JSON.parse(body);   
-            bot.sendMessage(chatId,'偽毒話你知黎緊'+res["weatherForecast"][nextDay]["week"]+'天氣預報係'+res["weatherForecast"][nextDay]["forecastWeather"]);
+            res=res["weatherForecast"]
+            bot.sendMessage(chatId,'偽毒話你知黎緊'+res[nextDay]["week"]+'嘅天氣預報\n果日'+res[nextDay]["forecastWeather"]);
         })
         }
     });
